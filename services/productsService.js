@@ -13,16 +13,18 @@ const productsService = {
     }
     return { code: 200, product };
   },
-  // addProducts: async (name) => {
-  //   if (!name) {
-  //     return { code: 400, message: 'Can not add Product' };
-  //   }
-  //   const { id } = await productsModel.addProducts({ name });
-  //   return { code: 201, product: id, name };
-  // },
   addProducts: async (name) => {
+    if (!name) {
+      return { code: 400, message: '"name" is required' };
+    }
+    if (name.length < 5) {
+      return {
+        code: 422,
+        message: '"name" length must be at least 5 characters long',
+      };
+    }
     const data = await productsModel.addProducts(name);
-    return data;
+    return { code: 201, data };
   },
 };
 
