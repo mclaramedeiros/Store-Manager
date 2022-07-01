@@ -11,7 +11,14 @@ const productsService = {
     if (product.length === 0) {
       return { code: 404, message: 'Product not found' };
     }
-      return { code: 200, product };
+    return { code: 200, product };
+  },
+  addProducts: async (name) => {
+    if (!name) {
+      return { code: 400, message: 'Can not add Product' };
+    }
+    const { id } = await productsModel.addProducts({ name });
+    return { code: 201, product: id, name };
   },
 };
 
