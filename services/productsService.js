@@ -13,12 +13,16 @@ const productsService = {
     }
     return { code: 200, product };
   },
+  // addProducts: async (name) => {
+  //   if (!name) {
+  //     return { code: 400, message: 'Can not add Product' };
+  //   }
+  //   const { id } = await productsModel.addProducts({ name });
+  //   return { code: 201, product: id, name };
+  // },
   addProducts: async (name) => {
-    if (!name) {
-      return { code: 400, message: 'Can not add Product' };
-    }
-    const { id } = await productsModel.addProducts({ name });
-    return { code: 201, product: id, name };
+    const data = await productsModel.addProducts(name);
+    return data;
   },
 };
 

@@ -14,13 +14,18 @@ const productsController = {
     res.status(code).json(product[0]);
   },
   addProducts: async (req, res) => {
-    const { name } = req.body;
-    console.log(name);
-    const { code, message, product } = await productService.addProducts({
-      name,
-    });
-    if (message) return res.status(code).json({ message });
-    res.status(code).json(product);
+    try {
+      const { name } = req.body;
+      const data = await productService.addProducts({
+        name,
+      });
+      console.log(data.id);
+      return res.status(201).send({ id: data.id, name });
+    } catch (error) {
+      return res.status(404).json({
+        message: error.message,
+      });
+    }
   },
 };
 
