@@ -15,10 +15,9 @@ const productsController = {
   },
   addProducts: async (req, res) => {
     const { name } = req.body;
-    const { data, code, message } = await productService.addProducts({ name });
+    const { data, code, message } = await productService.addProducts(name);
     if (message) return res.status(code).json({ message });
-    // console.log(data.id);
-    return res.status(code).send({ id: data.id, name });
+    res.status(code).send({ id: data.id, name });
   },
 };
 
