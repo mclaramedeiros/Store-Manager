@@ -1,53 +1,58 @@
-const salesModel = require('../models/salesModel');
+const { salesModel, addSales } = require('../models/salesModel');
+const productsModels = require('../models/productsModel');
 
-const validateSales = async () => {
-  body.forEach(({ productId, quantity }) => {
-    if (!productId) {
-      return { code: 400, message: '"productId" is required' };
+// const validateProduct = async (productId) => {
+//   const items = await productsModels.getAll();
+//   console.log(`items: ${items}`);
+//   const response = items.some(({ id }) => id === productId);
+//   return response;
+// };
+
+const validateSales = async (body) => {
+  const items = await productsModels.getAll();
+  const response = body.map(({ productId, quantity }) => {
+    // const exist = await validateProduct(productId);
+    const exist = items.some(({ id }) => id === productId);
+    console.log(`exist: ${exist}`);
+    if (!productId) return { code: 400, message: '"productId" is required' };
+    if (!exist) return { code: 404, message: 'Product not found' };
+    if (quantity < 1) {
+      return { code: 422, message: '"quantity" must be greater than or equal to 1' };
     }
-    if (!quantity) {
-      return {
-        code: 400,
-        message: '"quantity" is required',
-      };
-    }
-    if (quantity <= 0) {
-      return {
-        code: 422,
-        message: '"quantity" must be greater than or equal to 1',
-      };
-    }
+    if (!quantity) return { code: 400, message: '"quantity" is required' };
+    // console.log('oi to aqui');
+    // return { code: 'aqui' };
+    return { code: 200 };
   });
+  return response;
+};
+const addSaleProduct = async (body, saleId) => {
+  const product = body.forEach(async ({ productId, quantity }) => {
+    await salesModel.addProductSales(saleId, productId, quantity);
+  });
+  return product;
 };
 
 const salesService = {
   addSales: async () => {
-    const sales = await salesModel.addSales();
+    const sales = await addSales();
     return sales;
-  },
-
-  addProductSales: async (body) => {
-    body.forEach(({ productId, quantity }) => {
-      if (!productId) {
-        return { code: 400, message: '"productId" is required' };
-      }
-      if (!quantity) {
-        return {
-          code: 400,
-          message: '"quantity" is required',
-        };
-      }
-      if (quantity <= 0) {
-        return {
-          code: 422,
-          message: '"quantity" must be greater than or equal to 1',
-        };
-      }
-    });
-    const saleId = await salesModel.addSales();
-    const data = await salesModel.addProductSales(saleId, productId, quantity);
-    return { code: 201, Response: { saleId, itemsSold: [data] } };
   },
 };
 
-module.exports = { salesService };
+const addProductSaless = async (body) => {
+  const validate = await validateSales(body);
+  console.log(`validate: ${validate[0].message}`);
+  const valid = validate.find((v) => v.message);
+  console.log(`valid: ${valid}`);
+  if (valid) {
+    return { code: valid.code, message: valid.message };
+  }
+  const { insertId } = await addSales();
+  console.log(`saleID: ${insertId}`);
+
+  await addSaleProduct(body, insertId);
+  return { code: 201, saleId: insertId };
+};
+
+module.exports = { salesService, addProductSaless };
