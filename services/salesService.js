@@ -1,6 +1,5 @@
-const { salesModel, addSales } = require('../models/salesModel');
+const { salesModel, addSales, findSaleById } = require('../models/salesModel');
 const productsModels = require('../models/productsModel');
-
 // const validateProduct = async (productId) => {
 //   const items = await productsModels.getAll();
 //   console.log(`items: ${items}`);
@@ -17,7 +16,10 @@ const validateSales = async (body) => {
     if (!productId) return { code: 400, message: '"productId" is required' };
     if (!exist) return { code: 404, message: 'Product not found' };
     if (quantity < 1) {
-      return { code: 422, message: '"quantity" must be greater than or equal to 1' };
+      return {
+        code: 422,
+        message: '"quantity" must be greater than or equal to 1',
+      };
     }
     if (!quantity) return { code: 400, message: '"quantity" is required' };
     // console.log('oi to aqui');
@@ -54,5 +56,43 @@ const addProductSaless = async (body) => {
   await addSaleProduct(body, insertId);
   return { code: 201, saleId: insertId };
 };
+// logica da 8
+const listAllSales = async () => {
+  const sales = await salesModel.listAllSales();
+  console.log(`sales: ${sales}`);
+  const returnSale = sales.map(
+    ({ sale_id: saleId, product_id: productId, quantity, date }) => ({
+      date,
+      saleId,
+      productId,
+      quantity,
+    }),
+  );
+  console.log(sales);
+  return { code: 200, returnSale };
+};
 
-module.exports = { salesService, addProductSaless };
+const findSalesById = async (id) => {
+  const products = await findSaleById(id);
+  console.log(`products: ${products}`);
+  if (products.length === 0) {
+    return ({
+      code: 404,
+      message: 'Sale not found',
+    });
+  }
+  const sale = products.map(({ product_id: productId, quantity, date }) => ({
+    date,
+    productId,
+    quantity,
+  }));
+  console.log(`sale: ${sale}`);
+  return { code: 200, sale };
+};
+
+module.exports = {
+  salesService,
+  addProductSaless,
+  findSalesById,
+  listAllSales,
+};
