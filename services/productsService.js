@@ -26,6 +26,25 @@ const productsService = {
     const data = await productsModel.addProducts(name);
     return { code: 201, data };
   },
+  updateProduct: async (id, name) => {
+    if (!name || name === undefined) {
+      return { code: 400, message: '"name" is required' };
+    }
+    if (name.length < 5) {
+      return {
+        code: 422,
+        message: '"name" length must be at least 5 characters long',
+      };
+    }
+    const product = await productsModel.findById(id);
+    if (product.length === 0) {
+       return { code: 404, message: 'Product not found' };
+     }
+    await productsModel.updateProduct(id, name);
+    const response = [id, name];
+    console.log(`esse é meu response: ${response}`);
+    return { code: 200, response };
+  },
 };
 
 module.exports = productsService;
