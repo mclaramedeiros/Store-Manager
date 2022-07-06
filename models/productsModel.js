@@ -21,6 +21,7 @@ const productsModel = {
     const query = `UPDATE StoreManager.products
       SET name = ?
       WHERE id = ?`;
+    // a ordem em que eu recebia o [name, id] estava invertida
     await connection.execute(query, [name, id]);
     return true;
   },
