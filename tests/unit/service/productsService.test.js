@@ -6,7 +6,7 @@ const productsService = require('../../../services/productsService');
 const ARR_OF_TESTING = [
   {
     id: 1,
-    name: 'Machado do Thor Stormbreaker',
+    name: 'Martelo de Thor',
   },
   {
     id: 2,
@@ -15,6 +15,13 @@ const ARR_OF_TESTING = [
   {
     id: 3,
     name: 'Escudo do Capitão América',
+  },
+];
+
+const ARR_FIND_ONE = [
+  {
+    id: 1,
+    name: 'Martelo de Thor',
   },
 ];
 
@@ -34,10 +41,33 @@ describe('testing the products layer', () => {
     });
     it('it must return an object with "code" and "products"', async () => {
       const response = await productsService.getAll();
-      console.log(response);
       expect(response).to.be.deep.equal({
         code: 200,
         products: ARR_OF_TESTING,
+      });
+    });
+  });
+
+  describe('testing findById function', () => {
+    beforeEach(() => {
+      sinon.stub(productsModel, 'getAll').resolves([ARR_OF_TESTING[0]]);
+      sinon.stub(productsModel, 'findById').resolves(ARR_FIND_ONE);
+    });
+
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it('it must be an object', async () => {
+      const response = await productsService.getAll(1);
+      expect(response).to.be.an('object');
+    });
+
+    it('must be status 200', async () => {
+      const response = await productsService.findById(1);
+      expect(response).to.be.deep.equal({
+        code: 200,
+        product: ARR_FIND_ONE,
       });
     });
   });

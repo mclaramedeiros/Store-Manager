@@ -10,6 +10,7 @@ const productsController = {
   findById: async (req, res) => {
     const { id } = req.params;
     const { code, message, product } = await productService.findById(id);
+    console.log(product);
     if (message) return res.status(code).json({ message });
     res.status(code).json(product[0]);
   },

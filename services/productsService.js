@@ -42,7 +42,6 @@ const productsService = {
      }
     await productsModel.updateProduct(id, name);
     const response = [id, name];
-    console.log(`esse é meu response: ${response}`);
     return { code: 200, response };
   },
 };

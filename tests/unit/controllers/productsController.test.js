@@ -29,7 +29,7 @@ describe('testing the products controller', () => {
         .stub(productsService, 'getAll')
         .resolves({ code: 200, products: ARR_OF_TESTING });
     });
-    
+
     afterEach(() => {
       sinon.restore();
     });
@@ -43,4 +43,30 @@ describe('testing the products controller', () => {
       expect(res.json.calledWith({ products: ARR_OF_TESTING }));
     });
   })
+
+  describe('testing findById function', () => {
+    const req = {};
+    const res = {};
+    beforeEach(() => {
+      req.params = { id: 1 };
+      res.status = sinon.stub().returns(res);
+      res.json = sinon.stub().returns(res);
+      sinon
+        .stub(productsService, 'findById')
+        .resolves({ code: 200, product: ARR_OF_TESTING });
+    });
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it('it must be code 200', async () => {
+      await productsController.findById(req, res);
+      expect(res.status.calledWith(200)).to.be.true;
+    })
+    it('must return an object with the product', async () => {
+      await productsController.findById(req, res);
+      expect(res.json.calledWith(ARR_OF_TESTING[0]))
+        .to.be.true;
+    });
+  });
 });

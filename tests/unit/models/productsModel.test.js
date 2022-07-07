@@ -6,7 +6,7 @@ const productsModel = require('../../../models/productsModel');
 const ARR_OF_TESTING = [
   {
     id: 1,
-    name: 'Machado do Thor Stormbreaker',
+    name: 'Martelo de Thor',
   },
   {
     id: 2,
@@ -36,4 +36,22 @@ describe('testing products model layer', () => {
       expect(response).to.be.deep.equal(ARR_OF_TESTING);
     });
   });
+  describe('testing findById function', () => {
+     beforeEach(() => {
+      sinon.stub(connection, 'execute').resolves([ARR_OF_TESTING[0]]);
+    });
+    
+      afterEach(() => {
+      sinon.restore();
+    });
+    
+    it('must be an obj', async () => {
+      const response = await productsModel.findById();
+      expect(response).to.be.an('object');
+    });
+    it('must return an object with an "id" and "name"', async () => {
+      const response = await productsModel.findById(1);
+      expect(response).to.be.deep.equal(ARR_OF_TESTING[0])
+    })
+  })
 });

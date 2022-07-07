@@ -46,12 +46,10 @@ const addProductSaless = async (body) => {
   const validate = await validateSales(body);
   console.log(`validate: ${validate[0].message}`);
   const valid = validate.find((v) => v.message);
-  console.log(`valid: ${valid}`);
   if (valid) {
     return { code: valid.code, message: valid.message };
   }
   const { insertId } = await addSales();
-  console.log(`saleID: ${insertId}`);
 
   await addSaleProduct(body, insertId);
   return { code: 201, saleId: insertId };
@@ -59,7 +57,6 @@ const addProductSaless = async (body) => {
 // logica da 8
 const listAllSales = async () => {
   const sales = await salesModel.listAllSales();
-  console.log(`sales: ${sales}`);
   const returnSale = sales.map(
     ({ sale_id: saleId, product_id: productId, quantity, date }) => ({
       date,
@@ -68,13 +65,11 @@ const listAllSales = async () => {
       quantity,
     }),
   );
-  console.log(sales);
   return { code: 200, returnSale };
 };
 
 const findSalesById = async (id) => {
   const products = await findSaleById(id);
-  console.log(`products: ${products}`);
   if (products.length === 0) {
     return ({
       code: 404,
@@ -86,7 +81,6 @@ const findSalesById = async (id) => {
     productId,
     quantity,
   }));
-  console.log(`sale: ${sale}`);
   return { code: 200, sale };
 };
 
